@@ -3,7 +3,7 @@ require 'active_model/validations/numericality'
 module Paperclip
   module Validators
     class AttachmentSizeValidator < ActiveModel::Validations::NumericalityValidator
-      AVAILABLE_CHECKS = [:less_than, :less_than_or_equal_to, :greater_than, :greater_than_or_equal_to]
+      CHECKS = [:less_than, :less_than_or_equal_to, :greater_than, :greater_than_or_equal_to]
 
       def initialize(options)
         extract_options(options)
@@ -20,7 +20,7 @@ module Paperclip
         value = record.send(:read_attribute_for_validation, attr_name)
 
         unless value.blank?
-          options.slice(*AVAILABLE_CHECKS).each do |option, option_value|
+          options.slice(*CHECKS).each do |option, option_value|
             option_value = option_value.call(record) if option_value.is_a?(Proc)
             option_value = extract_option_value(option, option_value)
 
@@ -39,7 +39,7 @@ module Paperclip
       end
 
       def check_validity!
-        unless (AVAILABLE_CHECKS + [:in]).any? { |argument| options.has_key?(argument) }
+        unless (CHECKS + [:in]).any? { |argument| options.has_key?(argument) }
           raise ArgumentError, "You must pass either :less_than, :greater_than, or :in to the validator"
         end
       end
